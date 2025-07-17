@@ -1,0 +1,52 @@
+{
+    "name": "flowgistics/php-notion-client",
+    "description": "A PHP Notion client",
+    "keywords": [
+        "Flowgistics",
+        "Notion"
+    ],
+    "homepage": "https://github.com/flowgistics/php-notion-client",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Flowgistics",
+            "email": "support@flowgistics.nl",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^8.4",
+        "saloonphp/saloon": "^3.0"
+    },
+    "require-dev": {
+        "laravel/pint": "^1.0",
+        "pestphp/pest": "^3.6",
+        "phpstan/phpstan": "^2.1",
+        "spatie/ray": "^1.28"
+    },
+    "autoload": {
+        "psr-4": {
+            "Flowgistics\\PhpNotionClient\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Flowgistics\\PhpNotionClient\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/pest",
+        "test-coverage": "vendor/bin/pest --coverage",
+        "test-types": "vendor/bin/phpstan analyse --ansi",
+        "format": "vendor/bin/pint"
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true,
+            "phpstan/extension-installer": true
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
