@@ -2,7 +2,6 @@
 
 namespace Flowgistics\PhpNotionClient;
 
-use Flowgistics\PhpNotionClient\DTO\Page;
 use Flowgistics\PhpNotionClient\Resources\PagesResource;
 use Saloon\Contracts\Body\HasBody;
 use Saloon\Enums\Method;
@@ -28,8 +27,8 @@ class NotionClient extends Connector implements HasPagination
     protected function defaultHeaders(): array
     {
         return [
-            'Accept' => 'application/json',
-            'Content-Type' => 'application/json',
+            'Accept'         => 'application/json',
+            'Content-Type'   => 'application/json',
             'Notion-Version' => '2022-06-28',
         ];
     }
@@ -67,17 +66,17 @@ class NotionClient extends Connector implements HasPagination
             protected function applyPagination(Request $request): Request
             {
                 if ($this->currentResponse instanceof Response) {
-                    if($request instanceof HasBody && $request->getMethod() === Method::POST) {
+                    if ($request instanceof HasBody && $request->getMethod() === Method::POST) {
                         $request->body()->add('start_cursor', $this->getNextCursor($this->currentResponse));
-                    } else if($request->getMethod() === Method::GET) {
+                    } elseif ($request->getMethod() === Method::GET) {
                         $request->query()->add('start_cursor', $this->getNextCursor($this->currentResponse));
                     }
                 }
 
                 if (isset($this->perPageLimit)) {
-                    if($request instanceof HasBody && $request->getMethod() === Method::POST) {
+                    if ($request instanceof HasBody && $request->getMethod() === Method::POST) {
                         $request->body()->add('page_size', $this->perPageLimit);
-                    } else if($request->getMethod() === Method::GET) {
+                    } elseif ($request->getMethod() === Method::GET) {
                         $request->query()->add('page_size', $this->perPageLimit);
                     }
                 }

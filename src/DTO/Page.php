@@ -110,10 +110,10 @@ class Page
         }
 
         return match ($data['type']) {
-            'file' => isset($data['file']) ? File::fromArray($data['file']) : null,
-            'emoji' => Emoji::fromArray($data),
+            'file'     => isset($data['file']) ? File::fromArray($data['file']) : null,
+            'emoji'    => Emoji::fromArray($data),
             'external' => isset($data['external']) ? External::fromArray($data['external']) : null,
-            default => null,
+            default    => null,
         };
     }
 
@@ -121,16 +121,16 @@ class Page
     {
         return array_map(static function ($property) {
             return match ($property['type']) {
-                RichText::TYPE => !empty($property['rich_text']) ? RichText::fromArray($property['rich_text'][0]) : null,
-                'title' => !empty($property['title']) ? RichText::fromArray($property['title'][0]) : null, //title is saved as richText
-                CheckBox::TYPE => CheckBox::fromArray($property),
-                Date::TYPE => !empty($property['date']) ? Date::fromArray($property['date']) : null,
-                Email::TYPE => !empty($property['date']) ? Email::fromArray($property)['email'] : null,
-                Formula::TYPE => !empty($property['formula']) ? Formula::fromArray($property['formula']) : null,
+                RichText::TYPE    => !empty($property['rich_text']) ? RichText::fromArray($property['rich_text'][0]) : null,
+                'title'           => !empty($property['title']) ? RichText::fromArray($property['title'][0]) : null, //title is saved as richText
+                CheckBox::TYPE    => CheckBox::fromArray($property),
+                Date::TYPE        => !empty($property['date']) ? Date::fromArray($property['date']) : null,
+                Email::TYPE       => !empty($property['date']) ? Email::fromArray($property)['email'] : null,
+                Formula::TYPE     => !empty($property['formula']) ? Formula::fromArray($property['formula']) : null,
                 MultiSelect::TYPE => !empty($property['multi_select']) ? MultiSelect::fromArray($property['multi_select']) : null,
-                Number::TYPE => !empty($property['number']) ? Number::fromNumber($property['number']) : null,
+                Number::TYPE      => !empty($property['number']) ? Number::fromNumber($property['number']) : null,
                 PhoneNumber::TYPE => !empty($property['phone_number']) ? PhoneNumber::fromArray($property) : null,
-                default => null,
+                default           => null,
             };
         }, $properties);
     }

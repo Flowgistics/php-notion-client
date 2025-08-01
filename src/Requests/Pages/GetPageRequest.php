@@ -3,14 +3,12 @@
 namespace Flowgistics\PhpNotionClient\Requests\Pages;
 
 use Flowgistics\PhpNotionClient\DTO\Page;
-use Saloon\Contracts\Body\HasBody;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
 use Saloon\Http\Response;
-use Saloon\Traits\Body\HasJsonBody;
 
-class GetPageRequest extends Request {
-
+class GetPageRequest extends Request
+{
     protected Method $method = Method::GET;
 
     /**

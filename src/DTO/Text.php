@@ -23,7 +23,7 @@ class Text implements JsonSerializable
     {
         return [
             'content' => $this->content,
-//            'link' => $this->link,
+            //            'link' => $this->link,
         ];
     }
 }

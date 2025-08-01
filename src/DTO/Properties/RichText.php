@@ -36,7 +36,8 @@ class RichText implements JsonSerializable
         );
     }
 
-    public function jsonSerialize(): array {
+    public function jsonSerialize(): array
+    {
         $result = [];
 
         // Add the type-specific content

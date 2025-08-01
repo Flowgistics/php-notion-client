@@ -33,7 +33,7 @@ class PatchPageRequest extends Request implements HasBody
     public function defaultBody(): array
     {
         return [
-            "properties" => $this->payload
+            "properties" => $this->payload,
         ];
     }
 }
