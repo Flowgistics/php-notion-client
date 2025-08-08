@@ -7,10 +7,10 @@ class Number
     public const string TYPE = 'number';
 
     public function __construct(
-        public int $number,
+        public ?int $number,
     ) {}
 
-    public static function fromNumber(int $number): self
+    public static function fromNumber(?int $number): self
     {
         return new self(
             number: $number,

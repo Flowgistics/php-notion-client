@@ -2,18 +2,18 @@
 
 namespace Flowgistics\PhpNotionClient\DTO\Properties;
 
-class CheckBox
+class Relation
 {
-    public const string TYPE = 'checkbox';
+    public const string TYPE = 'relation';
 
     public function __construct(
-        public bool $checkbox,
+        public string $id,
     ) {}
 
     public static function fromArray(array $array): self
     {
         return new self(
-            checkbox: $array['checkbox'],
+            id: $array['id'],
         );
     }
 }
