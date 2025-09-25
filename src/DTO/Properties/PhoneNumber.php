@@ -22,7 +22,7 @@ class PhoneNumber implements Arrayable
     public function toArray(): array
     {
         return [
-            'type' => self::TYPE,
+            'type'        => self::TYPE,
             'phoneNumber' => $this->phoneNumber,
         ];
     }

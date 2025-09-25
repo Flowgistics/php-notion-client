@@ -22,8 +22,8 @@ class Page
         public ?string                  $lastEditedTime,
         public ?User                    $createdBy,
         public ?User                    $lastEditedBy,
-        public File|null|Emoji|External $cover,
-        public File|null|Emoji|External $icon,
+        public File|Emoji|External|null $cover,
+        public File|Emoji|External|null $icon,
         public ?array                   $parent,
         public ?bool                    $archived,
         public ?bool                    $inTrash,
@@ -105,17 +105,17 @@ class Page
      *
      * @return File|Emoji|External|null
      */
-    private static function getObjectType(array $data): File|null|Emoji|External
+    private static function getObjectType(array $data): File|Emoji|External|null
     {
         if (!isset($data['type'])) {
             return null;
         }
 
         return match ($data['type']) {
-            'file' => isset($data['file']) ? File::fromArray($data['file']) : null,
-            'emoji' => Emoji::fromArray($data),
+            'file'     => isset($data['file']) ? File::fromArray($data['file']) : null,
+            'emoji'    => Emoji::fromArray($data),
             'external' => isset($data['external']) ? External::fromArray($data['external']) : null,
-            default => null,
+            default    => null,
         };
     }
 
@@ -123,17 +123,17 @@ class Page
     {
         return array_map(static function ($property) {
             return match ($property['type']) {
-                RichText::TYPE => !empty($property['rich_text']) ? RichText::fromArray($property['rich_text'][0]) : null,
-                Title::TYPE => !empty($property['title']) ? Title::fromArray($property['title'][0]) : null,
-                CheckBox::TYPE => CheckBox::fromArray($property),
-                Date::TYPE => !empty($property['date']) ? Date::fromArray($property['date']) : null,
-                Email::TYPE => !empty($property['date']) ? Email::fromArray($property)['email'] : null,
-                Formula::TYPE => !empty($property['formula']) ? Formula::fromArray($property['formula']) : null,
+                RichText::TYPE    => !empty($property['rich_text']) ? RichText::fromArray($property['rich_text'][0]) : null,
+                Title::TYPE       => !empty($property['title']) ? Title::fromArray($property['title'][0]) : null,
+                CheckBox::TYPE    => CheckBox::fromArray($property),
+                Date::TYPE        => !empty($property['date']) ? Date::fromArray($property['date']) : null,
+                Email::TYPE       => !empty($property['date']) ? Email::fromArray($property)['email'] : null,
+                Formula::TYPE     => !empty($property['formula']) ? Formula::fromArray($property['formula']) : null,
                 MultiSelect::TYPE => !empty($property['multi_select']) ? MultiSelect::fromArray($property['multi_select']) : null,
-                Number::TYPE => !empty($property['number']) ? Number::fromNumber($property['number']) : null,
+                Number::TYPE      => !empty($property['number']) ? Number::fromNumber($property['number']) : null,
                 PhoneNumber::TYPE => PhoneNumber::fromArray($property),
-                Relation::TYPE => !empty($property['relation']) ? Relation::fromArray($property['relation']) : null,
-                default => null,
+                Relation::TYPE    => !empty($property['relation']) ? Relation::fromArray($property['relation']) : null,
+                default           => null,
             };
         }, $properties);
     }

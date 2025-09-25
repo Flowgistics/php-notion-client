@@ -24,9 +24,9 @@ class Date implements Arrayable
     public function toArray(): array
     {
         return [
-            'type' => self::TYPE,
+            'type'  => self::TYPE,
             'start' => $this->start,
-            'end' => $this->end,
+            'end'   => $this->end,
         ];
     }
 }

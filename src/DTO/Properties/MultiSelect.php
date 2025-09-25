@@ -27,9 +27,9 @@ class MultiSelect implements Arrayable
     public function toArray(): array
     {
         return [
-            'id' => $this->id,
-            'type' => self::TYPE,
-            'name' => $this->name,
+            'id'    => $this->id,
+            'type'  => self::TYPE,
+            'name'  => $this->name,
             'color' => $this->color,
         ];
     }

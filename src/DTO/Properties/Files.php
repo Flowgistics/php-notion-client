@@ -11,4 +11,3 @@ class Files
         public array $files,
     ) {}
 }
-

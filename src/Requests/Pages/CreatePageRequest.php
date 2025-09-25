@@ -33,19 +33,19 @@ class CreatePageRequest extends Request implements HasBody
 
     public function defaultBody(): array
     {
-        if(isset($this->payload['properties'])) {
+        if (isset($this->payload['properties'])) {
             $this->payload['properties'] = array_map(function (mixed $property) {
-                if($property instanceof Arrayable) {
+                if ($property instanceof Arrayable) {
                     return $property->toArray();
                 }
                 return $property;
             }, $this->payload['properties']);
         }
 
-        if(isset($this->payload['children'])) {
+        if (isset($this->payload['children'])) {
             $this->payload['children'] = array_map(function (array $properties) {
                 return array_map(function (mixed $property) {
-                    if($property instanceof Arrayable) {
+                    if ($property instanceof Arrayable) {
                         return $property->toArray();
                     }
                     return $property;

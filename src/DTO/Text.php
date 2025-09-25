@@ -23,7 +23,7 @@ class Text implements Arrayable
     {
         return [
             'content' => $this->content,
-            'link' => $this->link ? ["url" => $this->link] : null,
+            'link'    => $this->link ? ["url" => $this->link] : null,
         ];
     }
 }

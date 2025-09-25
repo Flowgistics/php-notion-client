@@ -8,7 +8,6 @@ use Flowgistics\PhpNotionClient\DTO\Mention;
 use Flowgistics\PhpNotionClient\DTO\Text;
 use Flowgistics\PhpNotionClient\Enums\RichTextType;
 use Illuminate\Contracts\Support\Arrayable;
-use JsonSerializable;
 
 class RichText implements Arrayable
 {

@@ -30,10 +30,10 @@ class Formula implements Arrayable
     public function toArray(): array
     {
         return [
-            'type' => $this->type,
-            'number' => $this->number,
-            'string' => $this->string,
-            'date' => $this->date,
+            'type'    => $this->type,
+            'number'  => $this->number,
+            'string'  => $this->string,
+            'date'    => $this->date,
             'boolean' => $this->boolean,
         ];
     }

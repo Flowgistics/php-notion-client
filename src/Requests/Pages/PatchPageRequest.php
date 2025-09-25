@@ -35,11 +35,11 @@ class PatchPageRequest extends Request implements HasBody
     {
         return [
             "properties" => array_map(function (mixed $property) {
-                if($property instanceof Arrayable) {
+                if ($property instanceof Arrayable) {
                     return $property->toArray();
                 }
                 return $property;
-            }, $this->payload)
+            }, $this->payload),
         ];
     }
 }

@@ -23,7 +23,7 @@ class Relation implements Arrayable
     {
         return [
             "relation" => [$this->relation],
-            "type" => self::TYPE,
+            "type"     => self::TYPE,
         ];
     }
 }

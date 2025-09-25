@@ -22,7 +22,7 @@ class Email implements Arrayable
     public function toArray(): array
     {
         return [
-            'type' => self::TYPE,
+            'type'  => self::TYPE,
             'email' => $this->email,
         ];
     }

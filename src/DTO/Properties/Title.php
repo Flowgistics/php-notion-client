@@ -12,7 +12,7 @@ class Title extends RichText
     public function toArray(): array
     {
         return [
-            'type' => self::TYPE,
+            'type'  => self::TYPE,
             'title' => $this->mapData(),
         ];
     }
