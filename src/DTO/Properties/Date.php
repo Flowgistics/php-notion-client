@@ -2,7 +2,9 @@
 
 namespace Flowgistics\PhpNotionClient\DTO\Properties;
 
-class Date
+use Illuminate\Contracts\Support\Arrayable;
+
+class Date implements Arrayable
 {
     public const string TYPE = 'date';
 
@@ -17,5 +19,14 @@ class Date
             start: $array['start'],
             end: $array['end'],
         );
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'type' => self::TYPE,
+            'start' => $this->start,
+            'end' => $this->end,
+        ];
     }
 }

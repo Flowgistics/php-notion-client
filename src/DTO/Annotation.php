@@ -23,7 +23,7 @@ class Annotation
             underline: $array['underline'],
             strikethrough: $array['strikethrough'],
             code: $array['code'],
-            color: $array['color'],
+            color: Color::tryFrom($array['color']),
         );
     }
 }

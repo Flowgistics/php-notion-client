@@ -13,6 +13,5 @@ enum Color: string
     case Gray = 'gray';
     case Brown = 'brown';
     case Pink = 'pink';
-
-    case default = self::Yellow->value;
+    case default = 'default';
 }

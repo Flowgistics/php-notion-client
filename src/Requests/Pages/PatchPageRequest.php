@@ -2,6 +2,7 @@
 
 namespace Flowgistics\PhpNotionClient\Requests\Pages;
 
+use Illuminate\Contracts\Support\Arrayable;
 use Saloon\Contracts\Body\HasBody;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
@@ -33,7 +34,12 @@ class PatchPageRequest extends Request implements HasBody
     public function defaultBody(): array
     {
         return [
-            "properties" => $this->payload,
+            "properties" => array_map(function (mixed $property) {
+                if($property instanceof Arrayable) {
+                    return $property->toArray();
+                }
+                return $property;
+            }, $this->payload)
         ];
     }
 }

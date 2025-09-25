@@ -2,7 +2,9 @@
 
 namespace Flowgistics\PhpNotionClient\DTO\Properties;
 
-class PhoneNumber
+use Illuminate\Contracts\Support\Arrayable;
+
+class PhoneNumber implements Arrayable
 {
     public const string TYPE = 'phone_number';
 
@@ -15,5 +17,13 @@ class PhoneNumber
         return new self(
             phoneNumber: $array['phoneNumber'],
         );
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'type' => self::TYPE,
+            'phoneNumber' => $this->phoneNumber,
+        ];
     }
 }

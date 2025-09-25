@@ -2,7 +2,9 @@
 
 namespace Flowgistics\PhpNotionClient\DTO\Properties;
 
-class CheckBox
+use Illuminate\Contracts\Support\Arrayable;
+
+class CheckBox implements Arrayable
 {
     public const string TYPE = 'checkbox';
 
@@ -15,5 +17,13 @@ class CheckBox
         return new self(
             checkbox: $array['checkbox'],
         );
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'type' => self::TYPE,
+            'checkbox' => $this->checkbox,
+        ];
     }
 }

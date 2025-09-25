@@ -3,6 +3,7 @@
 namespace Flowgistics\PhpNotionClient\Resources;
 
 use Flowgistics\PhpNotionClient\DTO\Page;
+use Flowgistics\PhpNotionClient\Requests\Pages\CreatePageRequest;
 use Flowgistics\PhpNotionClient\Requests\Pages\GetPageRequest;
 use Flowgistics\PhpNotionClient\Requests\Pages\PatchPageRequest;
 use Flowgistics\PhpNotionClient\Requests\Pages\PostPagesRequest;
@@ -18,7 +19,7 @@ class PagesResource extends BaseResource
         return $this->connector->send(new PostPagesRequest($databaseId));
     }
 
-    public function updatePage(string $pageId, array $payload)
+    public function updatePage(string $pageId, array $payload): Response
     {
         return $this->connector->send(new PatchPageRequest($pageId, $payload));
     }
@@ -26,6 +27,11 @@ class PagesResource extends BaseResource
     public function get(string $pageId): Page
     {
         return $this->connector->send(new GetPageRequest($pageId))->dto();
+    }
+
+    public function create(array $payload): Response
+    {
+        return $this->connector->send(new CreatePageRequest($payload));
     }
 
     /**

@@ -7,20 +7,21 @@ use Flowgistics\PhpNotionClient\DTO\Equation;
 use Flowgistics\PhpNotionClient\DTO\Mention;
 use Flowgistics\PhpNotionClient\DTO\Text;
 use Flowgistics\PhpNotionClient\Enums\RichTextType;
+use Illuminate\Contracts\Support\Arrayable;
 use JsonSerializable;
 
-class RichText implements JsonSerializable
+class RichText implements Arrayable
 {
     public const string TYPE = 'rich_text';
 
     public function __construct(
         public RichTextType $type,
-        public string $plainText,
-        public ?Equation $equitation = null,
-        public ?Mention $mention = null,
-        public ?Text $text = null,
-        public ?Annotation $annotation = null,
-        public ?string $href = null,
+        public string       $plainText,
+        public ?Equation    $equitation = null,
+        public ?Mention     $mention = null,
+        public ?Text        $text = null,
+        public ?Annotation  $annotation = null,
+        public ?string      $href = null,
     ) {}
 
     public static function fromArray(array $array): self
@@ -31,12 +32,19 @@ class RichText implements JsonSerializable
             equitation: isset($array['equitation']) ? Equation::fromArray($array['equitation']) : null,
             mention: isset($array['mention']) ? Mention::fromArray($array['mention']) : null,
             text: isset($array['text']) ? Text::fromArray($array['text']) : null,
-            annotation: isset($array['annotation']) ? Annotation::fromArray($array['annotation']) : null,
+            annotation: isset($array['annotations']) ? Annotation::fromArray($array['annotations']) : null,
             href: $array['href'],
         );
     }
 
-    public function jsonSerialize(): array
+    public function toArray(): array
+    {
+        return [
+            'rich_text' => $this->mapData(),
+        ];
+    }
+
+    protected function mapData(): array
     {
         $result = [];
 
@@ -44,24 +52,24 @@ class RichText implements JsonSerializable
         switch ($this->type) {
             case RichTextType::Text:
                 if ($this->text) {
-                    $result['text'] = $this->text instanceof JsonSerializable
-                        ? $this->text->jsonSerialize()
+                    $result['text'] = $this->text instanceof Arrayable
+                        ? $this->text->toArray()
                         : $this->text;
                 }
                 break;
 
             case RichTextType::Mention:
                 if ($this->mention) {
-                    $result['mention'] = $this->mention instanceof JsonSerializable
-                        ? $this->mention->jsonSerialize()
+                    $result['mention'] = $this->mention instanceof Arrayable
+                        ? $this->mention->toArray()
                         : $this->mention;
                 }
                 break;
 
             case RichTextType::Equation:
                 if ($this->equitation) {
-                    $result['equation'] = $this->equitation instanceof JsonSerializable
-                        ? $this->equitation->jsonSerialize()
+                    $result['equation'] = $this->equitation instanceof Arrayable
+                        ? $this->equitation->toArray()
                         : $this->equitation;
                 }
                 break;
@@ -73,8 +81,8 @@ class RichText implements JsonSerializable
 
         // Add optional properties
         if ($this->annotation) {
-            $result['annotations'] = $this->annotation instanceof JsonSerializable
-                ? $this->annotation->jsonSerialize()
+            $result['annotations'] = $this->annotation instanceof Arrayable
+                ? $this->annotation->toArray()
                 : $this->annotation;
         }
 
@@ -82,6 +90,6 @@ class RichText implements JsonSerializable
             $result['href'] = $this->href;
         }
 
-        return ['rich_text' => [$result]];
+        return [$result];
     }
 }

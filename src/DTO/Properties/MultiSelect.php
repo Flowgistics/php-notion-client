@@ -3,8 +3,9 @@
 namespace Flowgistics\PhpNotionClient\DTO\Properties;
 
 use Flowgistics\PhpNotionClient\Enums\Color;
+use Illuminate\Contracts\Support\Arrayable;
 
-class MultiSelect
+class MultiSelect implements Arrayable
 {
     public const string TYPE = 'multi_select';
 
@@ -21,5 +22,15 @@ class MultiSelect
             name: $array['name'],
             color: $array['color'],
         );
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'type' => self::TYPE,
+            'name' => $this->name,
+            'color' => $this->color,
+        ];
     }
 }

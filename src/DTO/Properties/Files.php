@@ -2,6 +2,7 @@
 
 namespace Flowgistics\PhpNotionClient\DTO\Properties;
 
+//@TODO
 class Files
 {
     public const string TYPE = 'files';
@@ -10,4 +11,4 @@ class Files
         public array $files,
     ) {}
 }
-//@TODO
+

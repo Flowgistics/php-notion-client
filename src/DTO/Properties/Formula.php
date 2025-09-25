@@ -2,7 +2,9 @@
 
 namespace Flowgistics\PhpNotionClient\DTO\Properties;
 
-class Formula
+use Illuminate\Contracts\Support\Arrayable;
+
+class Formula implements Arrayable
 {
     public const string TYPE = 'formula';
 
@@ -23,5 +25,16 @@ class Formula
             date: $array['date'] ?? null,
             boolean: $array['boolean'] ?? null,
         );
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'type' => $this->type,
+            'number' => $this->number,
+            'string' => $this->string,
+            'date' => $this->date,
+            'boolean' => $this->boolean,
+        ];
     }
 }

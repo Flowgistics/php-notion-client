@@ -2,7 +2,9 @@
 
 namespace Flowgistics\PhpNotionClient\DTO\Properties;
 
-class Email
+use Illuminate\Contracts\Support\Arrayable;
+
+class Email implements Arrayable
 {
     public const string TYPE = 'email';
 
@@ -15,5 +17,13 @@ class Email
         return new self(
             email: $array['email'],
         );
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'type' => self::TYPE,
+            'email' => $this->email,
+        ];
     }
 }

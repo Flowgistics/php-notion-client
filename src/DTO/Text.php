@@ -2,28 +2,28 @@
 
 namespace Flowgistics\PhpNotionClient\DTO;
 
-use JsonSerializable;
+use Illuminate\Contracts\Support\Arrayable;
 
-class Text implements JsonSerializable
+class Text implements Arrayable
 {
     public function __construct(
         public string $content,
-        public ?array $link = null,
+        public ?string $link = null,
     ) {}
 
     public static function fromArray(array $array): self
     {
         return new self(
             content: $array['content'],
-            link: $array['link'], //@todo
+            link: $array['link'],
         );
     }
 
-    public function jsonSerialize(): mixed
+    public function toArray(): array
     {
         return [
             'content' => $this->content,
-            //            'link' => $this->link,
+            'link' => $this->link ? ["url" => $this->link] : null,
         ];
     }
 }
