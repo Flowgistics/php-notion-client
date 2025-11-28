@@ -129,7 +129,7 @@ class Page
                 Date::TYPE        => !empty($property['date']) ? Date::fromArray($property['date']) : null,
                 Email::TYPE       => !empty($property['date']) ? Email::fromArray($property)['email'] : null,
                 Formula::TYPE     => !empty($property['formula']) ? Formula::fromArray($property['formula']) : null,
-                MultiSelect::TYPE => !empty($property['multi_select']) ? MultiSelect::fromArray($property['multi_select']) : null,
+                MultiSelect::TYPE => !empty($property['multi_select']) ? MultiSelect::fromArray($property['multi_select'][0]) : null,
                 Number::TYPE      => !empty($property['number']) ? Number::fromNumber($property['number']) : null,
                 PhoneNumber::TYPE => PhoneNumber::fromArray($property),
                 Relation::TYPE    => !empty($property['relation']) ? Relation::fromArray($property['relation']) : null,

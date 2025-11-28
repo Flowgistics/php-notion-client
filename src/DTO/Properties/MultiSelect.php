@@ -20,7 +20,7 @@ class MultiSelect implements Arrayable
         return new self(
             id: $array['id'],
             name: $array['name'],
-            color: $array['color'],
+            color: Color::tryFrom($array['color']),
         );
     }
 
