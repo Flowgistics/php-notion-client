@@ -2,6 +2,14 @@
 
 All notable changes to `php-notion-client` will be documented in this file.
 
+## 0.3.0 - 2026-07-03
+
+### What's Changed
+
+* Bump dependabot/fetch-metadata from 2.4.0 to 2.5.0 by @dependabot[bot] in https://github.com/Flowgistics/php-notion-client/pull/9
+
+**Full Changelog**: https://github.com/Flowgistics/php-notion-client/compare/0.2.1...0.3.0
+
 ## 0.2.1 - 2025-11-28
 
 Added a fix for multiselect
