@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Flowgistics\PhpNotionClient\Enums;
 
 enum RichTextType: string

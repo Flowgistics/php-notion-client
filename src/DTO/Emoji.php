@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Flowgistics\PhpNotionClient\DTO;
 
 class Emoji
@@ -9,16 +11,12 @@ class Emoji
     ) {}
 
     /**
-     * @param array{
-     *     emoji: string
-     * } $data
-     *
-     * @return self
+     * @param array<mixed, mixed> $data
      */
     public static function fromArray(array $data): self
     {
         return new self(
-            $data['emoji'],
+            is_string($data['emoji'] ?? null) ? $data['emoji'] : '',
         );
     }
 }

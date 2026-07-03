@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Flowgistics\PhpNotionClient\Requests\Pages;
 
 use Flowgistics\PhpNotionClient\DTO\Page;
@@ -17,7 +19,7 @@ class CreatePageRequest extends Request implements HasBody
     protected Method $method = Method::POST;
 
     /**
-     * @param array $payload
+     * @param array<mixed, mixed> $payload
      */
     public function __construct(
         protected array $payload = [],
@@ -31,9 +33,12 @@ class CreatePageRequest extends Request implements HasBody
         return "/pages";
     }
 
+    /**
+     * @return array<mixed, mixed>
+     */
     public function defaultBody(): array
     {
-        if (isset($this->payload['properties'])) {
+        if (isset($this->payload['properties']) && is_array($this->payload['properties'])) {
             $this->payload['properties'] = array_map(function (mixed $property) {
                 if ($property instanceof Arrayable) {
                     return $property->toArray();
@@ -42,8 +47,12 @@ class CreatePageRequest extends Request implements HasBody
             }, $this->payload['properties']);
         }
 
-        if (isset($this->payload['children'])) {
-            $this->payload['children'] = array_map(function (array $properties) {
+        if (isset($this->payload['children']) && is_array($this->payload['children'])) {
+            $this->payload['children'] = array_map(function (mixed $properties) {
+                if (!is_array($properties)) {
+                    return $properties;
+                }
+
                 return array_map(function (mixed $property) {
                     if ($property instanceof Arrayable) {
                         return $property->toArray();

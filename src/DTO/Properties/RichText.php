@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Flowgistics\PhpNotionClient\DTO\Properties;
 
 use Flowgistics\PhpNotionClient\DTO\Annotation;
@@ -9,6 +11,11 @@ use Flowgistics\PhpNotionClient\DTO\Text;
 use Flowgistics\PhpNotionClient\Enums\RichTextType;
 use Illuminate\Contracts\Support\Arrayable;
 
+/**
+ * @implements Arrayable<string, mixed>
+ *
+ * @phpstan-consistent-constructor
+ */
 class RichText implements Arrayable
 {
     public const string TYPE = 'rich_text';
@@ -23,19 +30,27 @@ class RichText implements Arrayable
         public ?string      $href = null,
     ) {}
 
-    public static function fromArray(array $array): self
+    /**
+     * @param array<mixed, mixed> $array
+     */
+    public static function fromArray(array $array): static
     {
-        return new self(
-            type: RichTextType::from($array['type']),
-            plainText: $array['plain_text'],
-            equitation: isset($array['equitation']) ? Equation::fromArray($array['equitation']) : null,
-            mention: isset($array['mention']) ? Mention::fromArray($array['mention']) : null,
-            text: isset($array['text']) ? Text::fromArray($array['text']) : null,
-            annotation: isset($array['annotations']) ? Annotation::fromArray($array['annotations']) : null,
-            href: $array['href'],
+        $type = RichTextType::tryFrom(is_string($array['type'] ?? null) ? $array['type'] : '') ?? RichTextType::Text;
+
+        return new static(
+            type: $type,
+            plainText: is_string($array['plain_text'] ?? null) ? $array['plain_text'] : '',
+            equitation: is_array($array['equation'] ?? null) ? Equation::fromArray($array['equation']) : null,
+            mention: is_array($array['mention'] ?? null) ? Mention::fromArray($array['mention']) : null,
+            text: is_array($array['text'] ?? null) ? Text::fromArray($array['text']) : null,
+            annotation: is_array($array['annotations'] ?? null) ? Annotation::fromArray($array['annotations']) : null,
+            href: is_string($array['href'] ?? null) ? $array['href'] : null,
         );
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function toArray(): array
     {
         return [
@@ -43,6 +58,9 @@ class RichText implements Arrayable
         ];
     }
 
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     protected function mapData(): array
     {
         $result = [];
@@ -51,9 +69,7 @@ class RichText implements Arrayable
         switch ($this->type) {
             case RichTextType::Text:
                 if ($this->text) {
-                    $result['text'] = $this->text instanceof Arrayable
-                        ? $this->text->toArray()
-                        : $this->text;
+                    $result['text'] = $this->text->toArray();
                 }
                 break;
 

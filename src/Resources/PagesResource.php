@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Flowgistics\PhpNotionClient\Resources;
 
 use Flowgistics\PhpNotionClient\DTO\Page;
+use Flowgistics\PhpNotionClient\NotionClient;
 use Flowgistics\PhpNotionClient\Requests\Pages\CreatePageRequest;
 use Flowgistics\PhpNotionClient\Requests\Pages\GetPageRequest;
 use Flowgistics\PhpNotionClient\Requests\Pages\PatchPageRequest;
@@ -19,6 +22,9 @@ class PagesResource extends BaseResource
         return $this->connector->send(new PostPagesRequest($databaseId));
     }
 
+    /**
+     * @param array<mixed, mixed> $payload
+     */
     public function updatePage(string $pageId, array $payload): Response
     {
         return $this->connector->send(new PatchPageRequest($pageId, $payload));
@@ -26,9 +32,14 @@ class PagesResource extends BaseResource
 
     public function get(string $pageId): Page
     {
-        return $this->connector->send(new GetPageRequest($pageId))->dto();
+        $page = $this->connector->send(new GetPageRequest($pageId))->dto();
+
+        return $page instanceof Page ? $page : Page::fromArray([]);
     }
 
+    /**
+     * @param array<mixed, mixed> $payload
+     */
     public function create(array $payload): Response
     {
         return $this->connector->send(new CreatePageRequest($payload));
@@ -41,6 +52,10 @@ class PagesResource extends BaseResource
      */
     public function paginate(string $databaseId): Iterator
     {
+        if (!$this->connector instanceof NotionClient) {
+            throw new \RuntimeException('Pages pagination requires a NotionClient connector.');
+        }
+
         /** @var CursorPaginator $paginator */
         $paginator = $this->connector->paginate(new PostPagesRequest($databaseId));
 

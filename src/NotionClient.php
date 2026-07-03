@@ -1,9 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Flowgistics\PhpNotionClient;
 
 use Flowgistics\PhpNotionClient\Resources\PagesResource;
 use Saloon\Contracts\Body\HasBody;
+use Saloon\Contracts\Body\MergeableBody;
 use Saloon\Enums\Method;
 use Saloon\Http\Auth\TokenAuthenticator;
 use Saloon\Http\Connector;
@@ -55,19 +58,26 @@ class NotionClient extends Connector implements HasPagination
 
             protected function getPageItems(Response $response, Request $request): array
             {
-                return $response->dto();
+                $items = $response->dto();
+
+                return is_array($items) ? $items : [];
             }
 
             protected function getNextCursor(Response $response): int|string
             {
-                return $response->json('next_cursor');
+                $cursor = $response->json('next_cursor');
+
+                return is_int($cursor) || is_string($cursor) ? $cursor : '';
             }
 
             protected function applyPagination(Request $request): Request
             {
                 if ($this->currentResponse instanceof Response) {
                     if ($request instanceof HasBody && $request->getMethod() === Method::POST) {
-                        $request->body()->add('start_cursor', $this->getNextCursor($this->currentResponse));
+                        $body = $request->body();
+                        if ($body instanceof MergeableBody) {
+                            $body->merge(['start_cursor' => $this->getNextCursor($this->currentResponse)]);
+                        }
                     } elseif ($request->getMethod() === Method::GET) {
                         $request->query()->add('start_cursor', $this->getNextCursor($this->currentResponse));
                     }
@@ -75,7 +85,10 @@ class NotionClient extends Connector implements HasPagination
 
                 if (isset($this->perPageLimit)) {
                     if ($request instanceof HasBody && $request->getMethod() === Method::POST) {
-                        $request->body()->add('page_size', $this->perPageLimit);
+                        $body = $request->body();
+                        if ($body instanceof MergeableBody) {
+                            $body->merge(['page_size' => $this->perPageLimit]);
+                        }
                     } elseif ($request->getMethod() === Method::GET) {
                         $request->query()->add('page_size', $this->perPageLimit);
                     }

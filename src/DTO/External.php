@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Flowgistics\PhpNotionClient\DTO;
 
 class External
@@ -9,16 +11,12 @@ class External
     ) {}
 
     /**
-     * @param array{
-     *     url: string
-     * } $data
-     *
-     * @return self
+     * @param array<mixed, mixed> $data
      */
     public static function fromArray(array $data): self
     {
         return new self(
-            $data['url'],
+            is_string($data['url'] ?? null) ? $data['url'] : '',
         );
     }
 }

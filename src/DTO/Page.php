@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Flowgistics\PhpNotionClient\DTO;
 
 use Flowgistics\PhpNotionClient\DTO\Properties\CheckBox;
@@ -15,6 +17,13 @@ use Flowgistics\PhpNotionClient\DTO\Properties\Title;
 
 class Page
 {
+    /**
+     * @param array<mixed, mixed>|null $cover
+     * @param array<mixed, mixed>|null $icon
+     * @param array<mixed, mixed>|null $parent
+     * @param array<mixed, mixed>|null $properties
+     * @param array<mixed, mixed>|null $rawProperties
+     */
     public function __construct(
         public ?string                  $id,
         public ?string                  $object,
@@ -22,8 +31,8 @@ class Page
         public ?string                  $lastEditedTime,
         public ?User                    $createdBy,
         public ?User                    $lastEditedBy,
-        public File|Emoji|External|null $cover,
-        public File|Emoji|External|null $icon,
+        public File|Emoji|External|array|null $cover,
+        public File|Emoji|External|array|null $icon,
         public ?array                   $parent,
         public ?bool                    $archived,
         public ?bool                    $inTrash,
@@ -34,116 +43,159 @@ class Page
     ) {}
 
     /**
-     * @param array{
-     *     id: string,
-     *     object: string,
-     *     created_time: string,
-     *     last_edited_time: string,
-     *     created_by: array{
-     *         id: string,
-     *         object: string
-     *     },
-     *     last_edited_by: array{
-     *         id: string,
-     *         object: string
-     *     },
-     *     cover: array{
-     *         type: string
-     *     },
-     *     icon: array{
-     *          type: string
-     *      },
-     *     parent: array{
-     *         type: string,
-     *         database_id: string
-     *     },
-     *     archived: bool,
-     *     in_trash: bool,
-     *     properties: array<string, array{
-     *         id: string,
-     *         type: string
-     *     }>,
-     *     url: string,
-     *     public_url: string|null
-     * } $data
-     *
-     * @return self
+     * @param array<mixed, mixed> $data
      */
     public static function fromArray(array $data): self
     {
         return new self(
-            id: $data['id'],
-            object: $data['object'],
-            createdTime: $data['created_time'],
-            lastEditedTime: $data['last_edited_time'],
-            createdBy: User::fromArray($data['created_by']),
-            lastEditedBy: User::fromArray($data['last_edited_by']),
-            cover: isset($data['cover']) ? self::getObjectType($data['cover']) : null,
-            icon: isset($data['icon']) ? self::getObjectType($data['icon']) : null,
-            parent: $data['parent'],
-            archived: $data['archived'],
-            inTrash: $data['in_trash'],
-            properties: isset($data['properties']) ? self::getProperties($data['properties']) : null,
-            rawProperties: $data['properties'],
-            url: $data['url'],
-            publicUrl: $data['public_url'],
+            id: self::stringOrNull($data['id'] ?? null),
+            object: self::stringOrNull($data['object'] ?? null),
+            createdTime: self::stringOrNull($data['created_time'] ?? null),
+            lastEditedTime: self::stringOrNull($data['last_edited_time'] ?? null),
+            createdBy: self::userOrNull($data['created_by'] ?? null),
+            lastEditedBy: self::userOrNull($data['last_edited_by'] ?? null),
+            cover: self::objectTypeOrNull($data['cover'] ?? null),
+            icon: self::objectTypeOrNull($data['icon'] ?? null),
+            parent: is_array($data['parent'] ?? null) ? $data['parent'] : null,
+            archived: is_bool($data['archived'] ?? null) ? $data['archived'] : null,
+            inTrash: is_bool($data['in_trash'] ?? null) ? $data['in_trash'] : null,
+            properties: is_array($data['properties'] ?? null) ? self::getProperties($data['properties']) : null,
+            rawProperties: is_array($data['properties'] ?? null) ? $data['properties'] : null,
+            url: self::stringOrNull($data['url'] ?? null),
+            publicUrl: self::stringOrNull($data['public_url'] ?? null),
         );
     }
 
+    private static function stringOrNull(mixed $value): ?string
+    {
+        return is_string($value) ? $value : null;
+    }
+
+    private static function userOrNull(mixed $value): ?User
+    {
+        return is_array($value) ? User::fromArray($value) : null;
+    }
+
     /**
-     * @param array{
-     *     type?: string,
-     *     file?: array{
-     *         url: string,
-     *         expiry_time: string
-     *     },
-     *     external?: array{
-     *         url: string
-     *     },
-     *     emoji?: string,
-     * } $data
-     *
-     * @return File|Emoji|External|null
+     * @return File|Emoji|External|array<mixed, mixed>|null
      */
-    private static function getObjectType(array $data): File|Emoji|External|null
+    private static function objectTypeOrNull(mixed $value): File|Emoji|External|array|null
+    {
+        return is_array($value) ? self::getObjectType($value) : null;
+    }
+
+    /**
+     * @param array<mixed, mixed> $data
+     *
+     * @return File|Emoji|External|array<mixed, mixed>|null
+     */
+    private static function getObjectType(array $data): File|Emoji|External|array|null
     {
         if (!isset($data['type'])) {
             return null;
         }
 
         return match ($data['type']) {
-            'file'     => isset($data['file']) ? File::fromArray($data['file']) : null,
-            'emoji'    => Emoji::fromArray($data),
-            'external' => isset($data['external']) ? External::fromArray($data['external']) : null,
-            default    => null,
+            'file'     => is_array($data['file'] ?? null) ? File::fromArray($data['file']) : null,
+            'emoji'    => isset($data['emoji']) ? Emoji::fromArray($data) : null,
+            'external' => is_array($data['external'] ?? null) ? External::fromArray($data['external']) : null,
+            default    => $data,
         };
     }
 
+    /**
+     * @param array<mixed, mixed> $properties
+     *
+     * @return array<mixed, mixed>
+     */
     private static function getProperties(array $properties): array
     {
-        return array_map(static function ($property) {
-            return match ($property['type']) {
-                RichText::TYPE    => !empty($property['rich_text']) ? RichText::fromArray($property['rich_text'][0]) : null,
-                Title::TYPE       => !empty($property['title']) ? Title::fromArray($property['title'][0]) : null,
-                CheckBox::TYPE    => CheckBox::fromArray($property),
-                Date::TYPE        => !empty($property['date']) ? Date::fromArray($property['date']) : null,
-                Email::TYPE       => !empty($property['date']) ? Email::fromArray($property)['email'] : null,
-                Formula::TYPE     => !empty($property['formula']) ? Formula::fromArray($property['formula']) : null,
-                MultiSelect::TYPE => !empty($property['multi_select']) ? MultiSelect::fromArray($property['multi_select'][0]) : null,
-                Number::TYPE      => !empty($property['number']) ? Number::fromNumber($property['number']) : null,
-                PhoneNumber::TYPE => PhoneNumber::fromArray($property),
-                Relation::TYPE    => !empty($property['relation']) ? Relation::fromArray($property['relation']) : null,
-                default           => null,
+        return array_map(
+            static fn(mixed $property): mixed => is_array($property) ? self::getPropertyValue($property) : $property,
+            $properties,
+        );
+    }
+
+    /**
+     * @param array<mixed, mixed> $property
+     */
+    private static function getPropertyValue(array $property): mixed
+    {
+        try {
+            return match ($property['type'] ?? null) {
+                RichText::TYPE     => ($richText = self::firstArrayItem($property['rich_text'] ?? null)) ? RichText::fromArray($richText) : null,
+                Title::TYPE        => ($title = self::firstArrayItem($property['title'] ?? null)) ? Title::fromArray($title) : null,
+                CheckBox::TYPE     => CheckBox::fromArray($property),
+                Date::TYPE         => isset($property['date']) && is_array($property['date']) ? Date::fromArray($property['date']) : null,
+                Email::TYPE        => Email::fromArray($property),
+                Formula::TYPE      => isset($property['formula']) && is_array($property['formula']) ? Formula::fromArray($property['formula']) : null,
+                MultiSelect::TYPE  => array_map(
+                    static fn(array $option): MultiSelect => MultiSelect::fromArray($option),
+                    self::arrayItems($property['multi_select'] ?? null),
+                ),
+                Number::TYPE       => Number::fromNumber(self::numberOrNull($property['number'] ?? null)),
+                PhoneNumber::TYPE  => PhoneNumber::fromArray($property),
+                Relation::TYPE     => is_array($property['relation'] ?? null) && $property['relation'] !== [] ? Relation::fromArray($property['relation']) : null,
+                'created_by'       => is_array($property['created_by'] ?? null) ? User::fromArray($property['created_by']) : null,
+                'created_time'     => $property['created_time'] ?? null,
+                'files'            => $property['files'] ?? [],
+                'last_edited_by'   => is_array($property['last_edited_by'] ?? null) ? User::fromArray($property['last_edited_by']) : null,
+                'last_edited_time' => $property['last_edited_time'] ?? null,
+                'people'           => array_map(
+                    static fn(array $user): User => User::fromArray($user),
+                    self::arrayItems($property['people'] ?? null),
+                ),
+                'rollup'           => $property['rollup'] ?? null,
+                'select'           => isset($property['select']) && is_array($property['select']) ? MultiSelect::fromArray($property['select']) : null,
+                'status'           => isset($property['status']) && is_array($property['status']) ? MultiSelect::fromArray($property['status']) : null,
+                'url'              => $property['url'] ?? null,
+                'unique_id'        => $property['unique_id'] ?? null,
+                'verification'     => $property['verification'] ?? null,
+                default            => $property,
             };
-        }, $properties);
+        } catch (\Throwable) {
+            return $property;
+        }
+
+    }
+
+    /**
+     * @return array<mixed, mixed>|null
+     */
+    private static function firstArrayItem(mixed $value): ?array
+    {
+        if (!is_array($value)) {
+            return null;
+        }
+
+        $first = reset($value);
+
+        return is_array($first) ? $first : null;
+    }
+
+    /**
+     * @return array<int, array<mixed, mixed>>
+     */
+    private static function arrayItems(mixed $value): array
+    {
+        if (!is_array($value)) {
+            return [];
+        }
+
+        return array_values(array_filter($value, static fn(mixed $item): bool => is_array($item)));
+    }
+
+    private static function numberOrNull(mixed $value): int|float|null
+    {
+        return is_int($value) || is_float($value) ? $value : null;
     }
 
     public function getProperty(string $propertyName): mixed
     {
-        $property = $this->properties[$propertyName] ?? null;
-        if (!$property) {
+        if (!$this->properties || !array_key_exists($propertyName, $this->properties)) {
             return null;
         }
-        return $property;
+
+        return $this->properties[$propertyName];
     }
 }

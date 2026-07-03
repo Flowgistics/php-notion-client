@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Flowgistics\PhpNotionClient\DTO;
 
 class User
@@ -10,18 +12,13 @@ class User
     ) {}
 
     /**
-     * @param array{
-     *     id: string,
-     *     object: string
-     * } $data
-     *
-     * @return self
+     * @param array<mixed, mixed> $data
      */
     public static function fromArray(array $data): self
     {
         return new self(
-            id: $data['id'],
-            object: $data['object'],
+            id: is_string($data['id'] ?? null) ? $data['id'] : '',
+            object: is_string($data['object'] ?? null) ? $data['object'] : 'user',
         );
     }
 }

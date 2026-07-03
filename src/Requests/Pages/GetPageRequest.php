@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Flowgistics\PhpNotionClient\Requests\Pages;
 
 use Flowgistics\PhpNotionClient\DTO\Page;
@@ -29,7 +31,7 @@ class GetPageRequest extends Request
     /**
      * @param Response $response
      *
-     * @return array<int, Page>
+     * @return Page
      * @throws \JsonException
      */
     public function createDtoFromResponse(Response $response): Page

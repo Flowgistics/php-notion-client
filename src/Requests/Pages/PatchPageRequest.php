@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Flowgistics\PhpNotionClient\Requests\Pages;
 
 use Illuminate\Contracts\Support\Arrayable;
@@ -15,8 +17,8 @@ class PatchPageRequest extends Request implements HasBody
     protected Method $method = Method::PATCH;
 
     /**
-     * @param string $pageId
-     * @param array  $payload
+     * @param string              $pageId
+     * @param array<mixed, mixed> $payload
      */
     public function __construct(
         protected string $pageId,
@@ -31,6 +33,9 @@ class PatchPageRequest extends Request implements HasBody
         return "/pages/$this->pageId";
     }
 
+    /**
+     * @return array<mixed, mixed>
+     */
     public function defaultBody(): array
     {
         return [

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Flowgistics\PhpNotionClient\Requests\Pages;
 
 use Flowgistics\PhpNotionClient\DTO\Page;
@@ -34,8 +36,15 @@ class PostPagesRequest extends Request implements Paginatable, HasBody
      */
     public function createDtoFromResponse(Response $response): array
     {
-        return array_map(function (array $page) {
-            return Page::fromArray($page);
-        }, $response->json('results'));
+        $results = $response->json('results');
+
+        if (!is_array($results)) {
+            return [];
+        }
+
+        return array_values(array_map(
+            static fn(mixed $page): Page => Page::fromArray(is_array($page) ? $page : []),
+            $results,
+        ));
     }
 }
